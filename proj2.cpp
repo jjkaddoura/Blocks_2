@@ -15,6 +15,12 @@ int windowWidth = 700;
 int windowHeight = 700;
 const char* texture_filename = "wildtextures-old-wood-original-file.bmp";
 
+int rotateCube1 = 0;
+int rotateCube2 = 0;
+int rotateCube3 = 0;
+int rotateCube4 = 0;
+int rotateCube5 = 0;
+
 GLfloat sideLength = 0.5;
 
 int main(int argc, char** argv)
@@ -35,6 +41,7 @@ int main(int argc, char** argv)
 	gluOrtho2D(0, windowWidth, 0, windowHeight);
 	glMatrixMode(GL_MODELVIEW);
 
+
 	glutMainLoop();
 	return 0;
 
@@ -54,14 +61,13 @@ void drawAllNumbers()
 
 		for(int i=0; i<10; i++)
 		{
+			
 			glPushMatrix();
 			glTranslatef(-3.0f + i, i%2==0? 3.0f : 1.5f, (float)-i);
+			glTranslatef(-4.0f , 1.0f, (float)-0.0f);
+			glRotatef(30.0, 0.0, 1.0, 0.0);
 
-			glPushMatrix();
-			glTranslatef(-3.0f, 3.0f, 0.0f);
-			glRotatef(45.0, 0.0, 1.0, 0.0);
 			drawNumber(i);
-			glPopMatrix();
 			glPopMatrix();
 		}
 }
@@ -73,26 +79,31 @@ void display()
   	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);   // Clear the color buffer
 		glLoadIdentity();
 		glPushMatrix();
-			//glRotatef(0, 1.0, 0, 0);
-		//glRotatef(0, 0, 1.0, 0);
+			glRotatef(0, 1.0, 0, 0);
+		glRotatef(0, 0, 1.0, 0);
 		gluLookAt(x, y, z,				// object point 
 					0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f); // viewing point	
-		//glRotatef(0, 1.0, 0.0, 0.0);
-		//glRotatef(0, 0.0, 1.0, 0.0);
+		glRotatef(0, 1.0, 0.0, 0.0);
+		glRotatef(0, 0.0, 1.0, 0.0);
 		
 		drawAllNumbers();
 
 
 	
+		rotateCube1 += 1;
+		rotateCube2 += 2;
+		rotateCube3 += 1;
+		rotateCube4 += 4;
+		rotateCube5 += 3;
 		
 		// First cube
 		glPushMatrix();
 		glTranslatef(-3.0f, -3.0f, 0.0f);
-		glRotatef(0, 0, 1.0, 0);
-		drawCube(1.0f);
+		glRotatef(rotateCube1, 0, 1.0, 0);
+		
+		//drawCube(1.0f);
 		drawCubeEdges(1.0f, 0.3, 1.0, .8);
 		drawLetterOnCube(1, 'D');
-		//drawNumOnCube(1,1);
 		drawNumOnCube(2, 2);
 		drawNumOnCube(3, 3);
 		drawNumOnCube(4, 2);
@@ -104,11 +115,12 @@ void display()
 
 		glPushMatrix();
 		glScalef(0.5f, 0.5f, 0.5f);
-		drawSolidCube(1.0f, 0.0f, 0.0f, 1.0f);;
+		glRotatef(rotateCube2, 0, 1, 0);
+		//drawSolidCube(1.0f, 0.0f, 0.0f, 1.0f);;
 		drawCubeEdges(1.0f, 1.0, 0.2, 0.3);
 		drawLetterOnCube(1, 'A');
 		drawLetterOnCube(2, 'C');
-		//drawNumOnCube(2, 3);
+		drawLetterOnCube(2, 'B');
 		drawNumOnCube(3, 3);
 		drawNumOnCube(4, 3);
 		drawLetterOnCube(5, 'C');
@@ -118,25 +130,25 @@ void display()
 
 			// third cube
 		glPushMatrix();
-		glRotatef(0, 0.0, 0, 2);
+		glRotatef(rotateCube3, 1.0, 0, 0);
 		glScalef(0.5f, 0.5f, 0.5f);
 		glTranslatef(5.0f, 0.0f, 0.0f);
-		drawSolidCube(1.0f, 1.0f, 0.0f, 0.0f);;
+		//drawSolidCube(1.0f, 1.0f, 0.0f, 0.0f);;
+		drawCubeEdges(1.0f, 0.2, 0.0, 0.0);
 		drawLetterOnCube(1, 'C');
 		drawNumOnCube(2, 2);
 		drawLetterOnCube(3, 'A');
 		drawNumOnCube(4, 2);
 		drawLetterOnCube(5, 'D');
 		drawLetterOnCube(6, 'A');
-		drawCubeEdges(1.0f, 0.2, 0.0, 0.0);
 		glPopMatrix();
 		
 	// fourth cube
 		glPushMatrix();
 		glScalef(0.5f, 0.5f, 0.5f);
 		glTranslatef(1.0f, 1.0f, 7.0f);
-		glRotatef(0, 0, 1.0, 0);
-		drawSolidCube(1.0f, 1.0f, 1.0f, 0.0f);;
+		glRotatef(-rotateCube4,0 , 1.0, 0);
+		//drawSolidCube(1.0f, 1.0f, 1.0f, 0.0f);;
 		drawCubeEdges(1.0f, 0.0, 0.2, 0.3f);
 		drawNumOnCube(1, 1);
 		drawNumOnCube(2, 2);
@@ -149,7 +161,8 @@ void display()
 		glPushMatrix();
 		glScalef(0.3f, 0.3f, 0.3f);
 		glTranslatef(6.0f, -7.0f, 5.0f);
-		drawSolidCube(1.0f, 0.0f, 0.3f, 0.0f);;
+		//drawSolidCube(1.0f, 0.0f, 0.3f, 0.0f);;
+		glRotatef(-rotateCube5, 0, 1.0, 0);
 		drawCubeEdges(1.0f, 0.0, 0.2, 0.3);
 		drawNumOnCube(1, 2);
 		drawLetterOnCube(2, 'A');
@@ -186,6 +199,7 @@ void drawCubeOutline(GLfloat cSide, GLfloat Rout, GLfloat Gout, GLfloat Bout,
 
 void drawCubeEdges(float side, float r, float g, float b)
 {
+				glEnable(GL_NORMALIZE);
 	float t = side/2 + 0.5;
 	glPushMatrix();
 	glScalef(0.5f, 0.5f, 0.5f);
@@ -380,6 +394,21 @@ glPopMatrix();
 
 void init()
 {
+	GLfloat ambient[] = { 0.1,.1,0.1,.1 };
+	GLfloat diffuse[] = { 1.0,1.0,1.0,1.0 };
+	GLfloat specular[] = { 1.0,1.0,1.0,1.0 };
+	GLfloat position[] = {0.0, 1.0, 0.0, 1.0};
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+	glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+
+
+	glClearColor(0.0,0.0,0.0,0.0);
 	glShadeModel(GL_SMOOTH);
 	glShadeModel(GL_FLAT);
 	glEnable(GL_DEPTH_TEST);
@@ -562,7 +591,7 @@ void drawC()
 	glScalef(1.0f, 1.2f, 1.0f);
 	glRotatef(45.0f, 0.0f, 0.0f, 2.0f);
 	glTranslatef(0.0f, 0.0f, 0.1f);
-	drawRing(270.0f, 0.1f, 0.5, .25);
+	drawRing(270.0f, 0.1f, 0.5, 0.25);
 	glPopMatrix();
 
 }
@@ -609,6 +638,7 @@ void configureSide(int side)
 			break;
 		case 2:
 			glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
+			glTranslatef(0.0f, 0.0f, 1.05f);
 			break;
 		case 3:
 			glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
@@ -655,7 +685,7 @@ void drawZero()
 {
 	glPushMatrix();
 	glScalef(0.9f, 1.0f, 0.002f);
-	drawRingOutLine(360.0f, 100.0f, 0.6, .4, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f);
+	drawRingOutLine(900.0f, 100.0f, 0.6, .4, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f);
 	glPopMatrix();
 }
 
@@ -768,7 +798,7 @@ glPopMatrix();
 glPushMatrix();
 glTranslatef(0.0f, 2 * -.137f, 0.0f);
 glScalef(.6f, .6f, 2.0f);
-drawRing(360.0f, .1f, .632, .29);
+drawRing(900.0f, .1f, .632, .29);
 glPopMatrix();
 glPushMatrix();
 glTranslatef(2 * -0.14f, 0.0f, -0.1f);
@@ -783,12 +813,12 @@ void drawEight()
 glPushMatrix();
  glTranslatef(0.0f, 2 * .137f, 0.0f);
  glScalef(.6f, .6f, 2.0f);
- drawRing(360.0f, .1f, .632, .29);
+ drawRing(900.0f, .1f, .632, .29);
  glPopMatrix();
  glPushMatrix();
  glTranslatef(0.0f, 2 * -.137f, 0.0f);
  glScalef(.6f, .6f, 2.0f);
- drawRing(360.0f, .1f, .632, .29);
+ drawRing(900.0f, .1f, .632, .29);
  glPopMatrix();
 	
 }
@@ -820,7 +850,7 @@ glPopMatrix();
 glPushMatrix();
 glTranslatef(0.0f, 2 * -.137f, 0.1f);
 glScalef(.6f, .6f, 2.0f);
-drawRing(360.0f, .1f, .632, .29);
+drawRing(900.0f, .1f, .632, .29);
 glPopMatrix();
 glPushMatrix();
 glTranslatef(2 * -0.14f, 0.0f, 0.0f);
@@ -972,7 +1002,6 @@ GL_RGB, GL_UNSIGNED_BYTE, image->getPixels());
 // set current texture to none
 glBindTexture(GL_TEXTURE_2D, 0);
 
-// free the image memory - no need to store it anymore
 delete image;
 
 }
