@@ -29,6 +29,9 @@ void drawDepthOfCircle(GLfloat angle, GLfloat depth, GLfloat oRadius);
 void drawNumOnCube(int side, int number);
 void drawLetterOnCube(int side, char letter);
 void initTexture();
+void motion(int x, int y);
+void mouse(int btn, int state, int x, int y);
+void processMouse(int btn, int state, int x, int y);
 
 void init();
 													 

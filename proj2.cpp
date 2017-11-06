@@ -13,13 +13,27 @@ float z = 6.0f;
 GLuint texid=0;
 int windowWidth = 700;
 int windowHeight = 700;
-const char* texture_filename = "wildtextures-old-wood-original-file.bmp";
+const char* texture_filename = "wood.jpg";
+float translateNumber = 0.0;
+bool  translateDirection = true;
 
 int rotateCube1 = 0;
 int rotateCube2 = 0;
 int rotateCube3 = 0;
 int rotateCube4 = 0;
 int rotateCube5 = 0;
+
+bool isUserDragging = false;
+int x_drag_init = 0;
+int y_drag_init = 0;
+double cam_angle_h = 0;
+double cam_angle_v = 0;
+GLfloat pointer_x, pointer_y;
+GLfloat old_pointer_y, old_pointer_x;
+GLfloat angle_x = 0.0f;
+GLfloat angle_y = 0.0f;
+float radius_x = sqrt(pow(y, 2) + pow(z, 2)), radius_y = sqrt(pow(x, 2) + pow(z, 2)), radiusz = sqrt(pow(x, 2) + pow(y, 2));
+
 
 GLfloat sideLength = 0.5;
 
@@ -35,15 +49,61 @@ int main(int argc, char** argv)
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
 	glutIdleFunc(display);
+	glutMouseFunc(processMouse);
 	initTexture();
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(0, windowWidth, 0, windowHeight);
 	glMatrixMode(GL_MODELVIEW);
 
+	glutMouseFunc(mouse);
+	glutMotionFunc(motion);
+
 
 	glutMainLoop();
 	return 0;
+
+}
+
+void processMouse(int btn, int state, int x, int y)
+{
+	if(btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	{
+					cout << "process mouse func" << endl;
+		pointer_x = x;
+		pointer_y 	= y;
+		old_pointer_x = pointer_x;
+		old_pointer_y = pointer_y;	
+	}
+}
+
+void mouse(int btn, int state, int x, int y)
+{
+	 if(btn == GLUT_LEFT_BUTTON )
+	 {
+		if(state == GLUT_UP)
+			isUserDragging = false;
+	 else
+	 {
+					 cout << "mouse func" << endl;
+	 
+			isUserDragging = true;
+			x_drag_init = x;
+			y_drag_init = y;
+	 }
+	 }
+
+}
+
+void motion(int x, int y)
+{
+	if(isUserDragging)
+	{
+		cam_angle_v += (y - y_drag_init)*0.3;
+		cam_angle_h += (x - x_drag_init)*0.3;	
+		x_drag_init = x;
+		y_drag_init = y;
+	}
 
 }
 
@@ -63,28 +123,45 @@ void drawAllNumbers()
 		{
 			
 			glPushMatrix();
-			glTranslatef(-3.0f + i, i%2==0? 3.0f : 1.5f, (float)-i);
+			glTranslatef(-3.0f + i, i%2==0? 3.0f+translateNumber : 1.5f-translateNumber, (float)-i);
 			glTranslatef(-4.0f , 1.0f, (float)-0.0f);
 			glRotatef(30.0, 0.0, 1.0, 0.0);
 
 			drawNumber(i);
 			glPopMatrix();
 		}
-}
 
+		if(translateNumber > 2)
+			translateDirection = false;
+		else if(translateNumber < -2 ) 
+			translateDirection =true;
+		
+		translateDirection ? translateNumber += 0.05 : translateNumber -= 0.05;
+
+}
 
 void display()
 {
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
   	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);   // Clear the color buffer
 		glLoadIdentity();
 		glPushMatrix();
-			glRotatef(0, 1.0, 0, 0);
-		glRotatef(0, 0, 1.0, 0);
+		if(pointer_x!=0 && pointer_y!=0 && old_pointer_x != 0 && old_pointer_y != 0)
+		{
+			GLfloat difference_x = (old_pointer_x - pointer_x)/200;
+			angle_x = difference_x*360/(2*3.14*radius_x);
+			GLfloat difference_y = (old_pointer_y - pointer_y)/200;
+			angle_y = difference_y*360/(2*3.14*radius_y);
+		}
+			glRotatef(angle_x, 1.0, 0, 0);
+		glRotatef(angle_y, 0, 1.0, 0);
 		gluLookAt(x, y, z,				// object point 
 					0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f); // viewing point	
 		glRotatef(0, 1.0, 0.0, 0.0);
 		glRotatef(0, 0.0, 1.0, 0.0);
+
+		glRotated(cam_angle_v, 1.0, 0.0, 0.0);
+		glRotated(cam_angle_h, .0, 1.0, 0.0);
 		
 		drawAllNumbers();
 
@@ -106,9 +183,9 @@ void display()
 		drawLetterOnCube(1, 'D');
 		drawNumOnCube(2, 2);
 		drawNumOnCube(3, 3);
-		drawNumOnCube(4, 2);
-		drawNumOnCube(5, 3);
-		drawNumOnCube(6, 3);
+		drawNumOnCube(4, 4);
+		drawNumOnCube(5, 5);
+		drawNumOnCube(6, 6);
 		glPopMatrix();
 
 		// second cube
@@ -122,9 +199,9 @@ void display()
 		drawLetterOnCube(2, 'C');
 		drawLetterOnCube(2, 'B');
 		drawNumOnCube(3, 3);
-		drawNumOnCube(4, 3);
+		drawNumOnCube(4, 5);
 		drawLetterOnCube(5, 'C');
-		drawNumOnCube(6, 3);
+		drawNumOnCube(6, 7);
 		glPopMatrix();
 		
 
@@ -136,8 +213,8 @@ void display()
 		//drawSolidCube(1.0f, 1.0f, 0.0f, 0.0f);;
 		drawCubeEdges(1.0f, 0.2, 0.0, 0.0);
 		drawLetterOnCube(1, 'C');
-		drawNumOnCube(2, 2);
-		drawLetterOnCube(3, 'A');
+		drawNumOnCube(2, 5);
+		drawNumOnCube(3, 8);
 		drawNumOnCube(4, 2);
 		drawLetterOnCube(5, 'D');
 		drawLetterOnCube(6, 'A');
@@ -153,9 +230,9 @@ void display()
 		drawNumOnCube(1, 1);
 		drawNumOnCube(2, 2);
 		drawNumOnCube(3, 3);
-		drawNumOnCube(4, 2);
-		drawNumOnCube(5, 3);
-		drawNumOnCube(6, 3);
+		drawNumOnCube(4, 5);
+		drawNumOnCube(5, 4);
+		drawNumOnCube(6, 8);
 		glPopMatrix();
 		// fifth cube
 		glPushMatrix();
@@ -168,8 +245,8 @@ void display()
 		drawLetterOnCube(2, 'A');
 		drawNumOnCube(3, 3);
 		drawNumOnCube(4, 1);
-		drawLetterOnCube(5, 'A');
-		drawNumOnCube(6, 3);
+		drawNumOnCube(5, 9);
+		drawNumOnCube(6, 6);
 		glPopMatrix();
 
 		
